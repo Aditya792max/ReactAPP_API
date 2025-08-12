@@ -58,3 +58,21 @@ app.get("/get", async (req, res) => {
           res.status(500).send({ status: "Something Went Wrong" });
      }
 });
+
+// This is the PUT API call
+app.put("/put", async (req, res) => {
+     console.log(req.body);
+     try {
+          const { name, age, location } = req.body;
+          // Simulate updating data
+          const updatedData = {
+               name: name || "Aditya Vikram Kirtaniaj",
+               age: age || 25,
+               location: location || "India"
+          };
+          res.status(200).json({ status: "Data Updated", data: updatedData });
+     } catch (error) {
+          console.error("Error:", error);
+          res.status(500).send({ status: "Something Went Wrong" });
+     }
+});
