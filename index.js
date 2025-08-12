@@ -30,7 +30,7 @@ app.post("/post",async (req, res) => {
 
 // Connecting to MongoDB 
 
-const mongoURL = "mongodb+srv://adityavikramkirtania1792:Aditya1234@cluster0.501zmvi.mongodb.net/"
+const mongoURL = "mongodb+srv://adityavikramkirtania1792:Aditya1234@cluster0.501zmvi.mongodb.net/webdevpro"
 // mongoose.connect(mongoURL, {
 //      useNewUrlParser: true,
 // }).then(() => {
@@ -55,7 +55,7 @@ mongoose.connect(mongoURL)
      .catch((error) => {
           console.error("MongoDB connection error:", error);
      });
-
+//                     <<<<<<<<<<THIS IS THE MAIN ONE BTW>>>>>>>>>>
 // This is the POST API calling 
 app.post("/post", async (req, res) => {
      console.log(req.body);
@@ -78,7 +78,6 @@ app.post("/post", async (req, res) => {
           console.error("Error:", error);
           res.status(500).send({ status: "Something Went Wrong" });
      }
-
 });
 
 // This is the GET API calling.
@@ -118,3 +117,60 @@ app.put("/put", async (req, res) => {
 });
 
 
+
+
+const User = require('./userDetails.js');
+
+app.post("/register", async (req, res) => {
+     const { uName, uEmail, uphoneNo } = req.body;
+
+     // Validate required fields
+     if (!uName || !uEmail || !uphoneNo) {
+          return res.status(400).json({
+               status: 'ERROR',
+               message: 'All fields (uName, uEmail, uphoneNo) are required'
+          });
+     }
+
+     try {
+          const newUser = await User.create({
+               uName: uName,
+               uEmail: uEmail,
+               uphoneNo: uphoneNo
+          });
+          console.log('User created successfully:', req.body);
+          res.status(201).json({
+               status: 'OK',
+               message: 'User registered successfully',
+               user: {
+                    id: newUser._id,
+                    uName: newUser.uName,
+                    uEmail: newUser.uEmail
+               }
+          });
+     } catch (error) {
+          console.error('Registration error:', error);
+
+          // Handle duplicate email error
+          if (error.code === 11000) {
+               return res.status(409).json({
+                    status: 'ERROR',
+                    message: 'Email already exists'
+               });
+          }
+
+          // Handle validation errors
+          if (error.name === 'ValidationError') {
+               return res.status(400).json({
+                    status: 'ERROR',
+                    message: 'Validation failed',
+                    details: error.message
+               });
+          }
+
+          res.status(500).json({
+               status: 'ERROR',
+               message: 'Internal server error'
+          });
+     }
+});
