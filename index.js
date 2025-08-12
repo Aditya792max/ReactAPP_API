@@ -28,16 +28,33 @@ app.post("/post",async (req, res) => {
 });
 */
 
+// Connecting to MongoDB 
 
 const mongoURL = "mongodb+srv://adityavikramkirtania1792:Aditya1234@cluster0.501zmvi.mongodb.net/"
-mongoose.connect(mongoURL, {
-     useNewUrlParser: true,
-}).then(() => {
-     console.log("Connected To DataBase");
-}).catch((error) => {
-     console.error("MongoDB connection error:", error);
-});
+// mongoose.connect(mongoURL, {
+//      useNewUrlParser: true,
+// }).then(() => {
+//      console.log("Connected To DataBase");
+// }).catch((error) => {
+//      console.error("MongoDB connection error:", error);
+// });
 
+
+
+/*
+We are not using the above code |^| since the useNewUrlParser option is deprecated.
+This might get replaced in any major update to the Node.js.
+*/
+
+
+
+mongoose.connect(mongoURL)
+     .then(() => {
+          console.log("Connected To DataBase");
+     })
+     .catch((error) => {
+          console.error("MongoDB connection error:", error);
+     });
 
 // This is the POST API calling 
 app.post("/post", async (req, res) => {
