@@ -121,6 +121,51 @@ app.put("/put", async (req, res) => {
 
 const User = require('./userDetails.js');
 
+// User login endpoint
+app.post("/user-login", async (req, res) => {
+     const { uEmail, uphoneNo } = req.body;
+
+     // Validate required fields
+     if (!uEmail || !uphoneNo) {
+          return res.status(400).json({
+               status: 'ERROR',
+               message: 'Email and phone number are required for login'
+          });
+     }
+
+     try {
+          // Find user by email and phone number
+          const user = await User.findOne({
+               uEmail: uEmail,
+               uphoneNo: uphoneNo
+          });
+
+          if (!user) {
+               return res.status(401).json({
+                    status: 'ERROR',
+                    message: 'Invalid credentials. User not found.'
+               });
+          }
+
+          console.log('User logged in successfully:', uEmail);
+          res.status(200).json({
+               status: 'OK',
+               message: 'Login successful',
+               user: {
+                    id: user._id,
+                    uName: user.uName,
+                    uEmail: user.uEmail
+               }
+          });
+     } catch (error) {
+          console.error('Login error:', error);
+          res.status(500).json({
+               status: 'ERROR',
+               message: 'Internal server error'
+          });
+     }
+});
+
 app.post("/register", async (req, res) => {
      const { uName, uEmail, uphoneNo } = req.body;
 
@@ -175,9 +220,9 @@ app.post("/register", async (req, res) => {
      }
 });
 
-// const Admin = require("adminDetails.js");
+// Admin registration endpoint
 const adminDetails = require('./adminDetails.js');
-app.post("/login", async (req, res) => {
+app.post("/admin-register", async (req, res) => {
      const { aName, aEmail, aphoneNo } = req.body;
 
      // Validate required fields
@@ -230,3 +275,49 @@ app.post("/login", async (req, res) => {
           });
      }
 });
+
+// Admin login endpoint
+app.post("/login", async (req, res) => {
+     const { aEmail, aphoneNo } = req.body;
+
+     // Validate required fields
+     if (!aEmail || !aphoneNo) {
+          return res.status(400).json({
+               status: 'ERROR',
+               message: 'Email and phone number are required for login'
+          });
+     }
+
+     try {
+          // Find admin by email and phone number
+          const admin = await adminDetails.findOne({
+               aEmail: aEmail,
+               aphoneNo: aphoneNo
+          });
+
+          if (!admin) {
+               return res.status(401).json({
+                    status: 'ERROR',
+                    message: 'Invalid credentials. Admin not found.'
+               });
+          }
+
+          console.log('Admin logged in successfully:', aEmail);
+          res.status(200).json({
+               status: 'OK',
+               message: 'Login successful',
+               admin: {
+                    id: admin._id,
+                    aName: admin.aName,
+                    aEmail: admin.aEmail
+               }
+          });
+     } catch (error) {
+          console.error('Login error:', error);
+          res.status(500).json({
+               status: 'ERROR',
+               message: 'Internal server error'
+          });
+     }
+});
+
