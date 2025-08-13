@@ -174,3 +174,59 @@ app.post("/register", async (req, res) => {
           });
      }
 });
+
+// const Admin = require("adminDetails.js");
+const adminDetails = require('./adminDetails.js');
+app.post("/login", async (req, res) => {
+     const { aName, aEmail, aphoneNo } = req.body;
+
+     // Validate required fields
+     if (!aName || !aEmail || !aphoneNo) {
+          return res.status(400).json({
+               status: 'ERROR',
+               message: 'All fields (aName, aEmail, aphoneNo) are required'
+          });
+     }
+
+     try {
+          const newAdmin = await adminDetails.create({
+               aName: aName,
+               aEmail: aEmail,
+               aphoneNo: aphoneNo
+          });
+          console.log('Admin created successfully:', req.body);
+          res.status(201).json({
+               status: 'OK',
+               message: 'Admin registered successfully',
+               admin: {
+                    id: newAdmin._id,
+                    aName: newAdmin.aName,
+                    aEmail: newAdmin.aEmail
+               }
+          });
+     } catch (error) {
+          console.error('Registration error:', error);
+
+          // Handle duplicate email error
+          if (error.code === 11000) {
+               return res.status(409).json({
+                    status: 'ERROR',
+                    message: 'Email already exists'
+               });
+          }
+
+          // Handle validation errors
+          if (error.name === 'ValidationError') {
+               return res.status(400).json({
+                    status: 'ERROR',
+                    message: 'Validation failed',
+                    details: error.message
+               });
+          }
+
+          res.status(500).json({
+               status: 'ERROR',
+               message: 'Internal server error'
+          });
+     }
+});
