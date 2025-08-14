@@ -11,7 +11,7 @@ app.listen(PORT, () => {
 });
 
 
-
+// This is all I do 
 
 /*
 // This is my first API Calling.....
@@ -118,7 +118,7 @@ app.put("/put", async (req, res) => {
 
 
 
-
+// const Admin = require('./adminDetails.js');
 const User = require('./userDetails.js');
 
 // User login endpoint
@@ -222,6 +222,7 @@ app.post("/register", async (req, res) => {
 
 // Admin registration endpoint
 const adminDetails = require('./adminDetails.js');
+const UserDetails = require('./userDetails.js');
 app.post("/admin-register", async (req, res) => {
      const { aName, aEmail, aphoneNo } = req.body;
 
@@ -318,6 +319,33 @@ app.post("/login", async (req, res) => {
                status: 'ERROR',
                message: 'Internal server error'
           });
+     }
+});
+
+
+
+
+// SO THIS ONE IS WORKING.....
+
+app.post("/get-Users", async (req, res) => {
+     try {
+          const { uEmail } = req.body;
+
+          if (!uEmail) {
+               return res.status(400).json({ status: "ERROR", message: "Email is required" });
+          }
+
+          const user = await UserDetails.findOne({ uEmail });
+
+          if (user) {
+               console.log(user);
+               return res.status(200).json(user);
+          } else {
+               return res.status(404).json({ status: "User not found" });
+          }
+     } catch (error) {
+          console.error("Error:", error);
+          res.status(500).json({ status: "Something Went Wrong" });
      }
 });
 
